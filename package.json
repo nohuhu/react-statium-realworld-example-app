@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "axios": "^0.19.1",
-    "dompurify": "^2.0.7",
+    "dompurify": "^2.0.17",
     "history": "^4.10.1",
     "lodash.get": "^4.4.2",
     "lodash.isequal": "^4.5.0",
