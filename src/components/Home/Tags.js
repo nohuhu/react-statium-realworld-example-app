@@ -1,37 +1,63 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { withBindings } from 'statium';
+import Store, { useStore } from 'statium';
 
 import './Tags.css';
 
-const Cell = ({ tag, selectedTag, setSelectedTag }) => (
-    <Link to="" className={`tag-default tag-pill ${tag === selectedTag ? 'active' : ''}`}
-        onClick={e => {
-            e.preventDefault();
-            
-            setSelectedTag(tag === selectedTag ? null : tag);
-        }}>
-        
-        {tag}
-    </Link>
+export const loadTags = async ({ state, set }) => {
+  await set({ loadingTags: true });
+
+  const { tags } = await state.api.Tags.all();
+
+  await set({
+    tags,
+    loadingTags: false,
+  });
+};
+
+const Pill = ({ tag, selectedTag }) => (
+  <Link to={`/tag/${tag}`}
+    className={`tag-default tag-pill ${tag === selectedTag ? 'active' : ''}`}>
+    {tag}
+  </Link>
 );
 
-const Tags = ({ tags, selectedTag, setSelectedTag }) => {
-    if (!Array.isArray(tags)) {
-        return null;
-    }
-    
-    return (
-        <div className="tag-list">
-            {tags.map(tag => 
-                <Cell key={tag}
-                    tag={tag}
-                    selectedTag={selectedTag}
-                    setSelectedTag={setSelectedTag}
-                />
-            )}
-        </div>
-    );
+const TagList = () => {
+  const { data, state, dispatch } = useStore();
+
+  useEffect(() => {
+    dispatch(loadTags);
+  }, [dispatch]);
+
+  const { selectedTag } = data;
+  const { loadingTags, tags } = state;
+
+  if (loadingTags || !tags) {
+    return <span>Loading tags...</span>;
+  }
+
+  return (
+    <div className="tag-list">
+      {!tags.length && <div className="post-preview">No tags are here... yet.</div>}
+      {!!tags.length && tags.map(tag =>
+        <Pill key={tag}
+          tag={tag}
+          selectedTag={selectedTag}
+        />
+      )}
+    </div>
+  );
 }
 
-export default withBindings(['tags', ['selectedTag', true]])(Tags);
+const initialState = {
+  loadingTags: false,
+  tags: null,
+};
+
+const Tags = () => (
+  <Store tag="Tags" state={initialState}>
+    <TagList />
+  </Store>
+);
+
+export default Tags;

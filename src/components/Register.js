@@ -1,195 +1,135 @@
 import React from 'react';
-import ViewModel, { Bind } from 'statium';
+import Store from 'statium';
 import { Link } from 'react-router-dom';
 
+import { register } from '../actions/user.js';
+import { emailRe, inputCls, haveErrors } from '../util/form.js';
+
+import ErrorList from './ErrorList.js';
 import LoadMask from './LoadMask.js';
 
-const defaultState = {
-    busy: false,
-    errors: {},
-    username: '',
-    email: '',
-    password: '',
-    password2: '',
+const initialState = {
+  busy: false,
+  errors: {},
+  serverErrors: null,
+  username: '',
+  email: '',
+  password: '',
+  password2: '',
 };
 
 const Register = () => (
-    <ViewModel id="Register"
-        initialState={defaultState}
-        applyState={validate}
-        formulas={{
-            isValid,
-        }}
-        controller={{
-            handlers: {
-                submit,
-            },
-        }}>
-        
-        <Bind controller
-            props={["busy", "errors", ["username", true], ["email", true],
-                   ["password", true], ["password2", true], "isValid"]}>
-            
-            { ({ busy, errors, isValid, ...values }, { $dispatch }) => (
-                <div className="auth-page">
-                    <LoadMask loading={busy} />
+  <Store tag="Register" state={initialState} reduceState={validate}>
+  {({ state, set, dispatch }) => {
+    const onSubmit = e => {
+      e.preventDefault();
+      dispatch(register);
+    };
+
+    return (
+      <div className="auth-page">
+        <LoadMask loading={state.busy} />
+
+        <div className="container page">
+          <div className="row">
+            <div className="col-md-6 offset-md-3 col-xs-12">
+              <h1 className="text-xs-center">Sign Up</h1>
+
+              <p className="text-xs-center">
+                <Link to="/login">Have an account?</Link>
+              </p>
+
+              <ErrorList errors={state.serverErrors || {}} />
+
+              <form onSubmit={onSubmit}>
+                <fieldset>
+                  <fieldset className="form-group">
+                    <input type="text"
+                      className={inputCls(state.errors.username)}
+                      placeholder="Username"
+                      value={state.username}
+                      // Resetting server errors on input field change allows us to proceed
+                      // after we submitted the form once and got back an error.
+                      onChange={e => set({ username: e.target.value, serverErrors: null })} />
                     
-                    <div className="container page">
-                        <div className="row">
-                            <div className="col-md-6 offset-md-3 col-xs-12">
-                                <h1 className="text-xs-center">
-                                    Sign Up
-                                </h1>
-                                
-                                <p className="text-xs-center">
-                                    <Link to="/login">
-                                        Have an account?
-                                    </Link>
-                                </p>
-                                
-                                <form>
-                                    <fieldset>
-                                        <fieldset className="form-group">
-                                            <input type="text"
-                                                className={"form-control form-control-lg" +
-                                                          (errors.username ? " is-invalid" : "")}
-                                                placeholder="Username"
-                                                value={values.username}
-                                                onChange={e => {
-                                                    values.setUsername(e.target.value);
-                                                }} />
-                                            <div className="invalid-feedback">
-                                                {errors.username || ''}
-                                            </div>
-                                        </fieldset>
-                                        
-                                        <fieldset className="form-group">
-                                            <input type="email"
-                                                className={"form-control form-control-lg" +
-                                                           (errors.email ? " is-invalid" : "")}
-                                                placeholder="Email"
-                                                value={values.email}
-                                                onChange={e => {
-                                                    values.setEmail(e.target.value);
-                                                }} />
-                                            <div className="invalid-feedback">
-                                                {errors.email || ''}
-                                            </div>
-                                        </fieldset>
-                                        
-                                        <fieldset className="form-group">
-                                            <input type="password"
-                                                className={"form-control form-control-lg" +
-                                                           (errors.password ? " is-invalid" : "")}
-                                                placeholder="Password"
-                                                value={values.password}
-                                                onChange={e => {
-                                                    values.setPassword(e.target.value);
-                                                }} />
-                                            <div className="invalid-feedback">
-                                                {errors.password || ''}
-                                            </div>
-                                        </fieldset>
-                                        
-                                        <fieldset className="form-group">
-                                            <input type="password"
-                                                className={"form-control form-control-lg" +
-                                                           (errors.password2 ? " is-invalid" : "")}
-                                                placeholder="Confirm password"
-                                                value={values.password2}
-                                                onChange={e => {
-                                                    values.setPassword2(e.target.value);
-                                                }} />
-                                            <div className="invalid-feedback">
-                                                {errors.password2 || ''}
-                                            </div>
-                                        </fieldset>
-                                    </fieldset>
-                                    
-                                    <button type="button"
-                                        className="btn btn-lg btn-primary pull-xs-right"
-                                        disabled={busy || !isValid}
-                                        onClick={e => {
-                                            e.preventDefault();
-                                            $dispatch('submit');
-                                        }}>
-                                        
-                                        Sign up
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
+                    <div className="invalid-feedback">
+                      {state.errors.username}
                     </div>
-                </div>
-            )}
-        </Bind>
-    </ViewModel>
+                  </fieldset>
+
+                  <fieldset className="form-group">
+                    <input type="email"
+                      className={inputCls(state.errors.email)}
+                      placeholder="Email"
+                      value={state.email}
+                      onChange={e => set({ email: e.target.value, serverErrors: null })} />
+                    
+                    <div className="invalid-feedback">
+                      {state.errors.email}
+                    </div>
+                  </fieldset>
+
+                  <fieldset className="form-group">
+                    <input type="password"
+                      className={inputCls(state.errors.password)}
+                      placeholder="Password"
+                      value={state.password}
+                      onChange={e => set({ password: e.target.value, serverErrors: null })} />
+                    
+                    <div className="invalid-feedback">
+                      {state.errors.password}
+                    </div>
+                  </fieldset>
+
+                  <fieldset className="form-group">
+                    <input type="password"
+                      className={inputCls(state.errors.password2)}
+                      placeholder="Confirm password"
+                      value={state.password2}
+                      onChange={e => set({ password2: e.target.value, serverErrors: null })} />
+                    
+                    <div className="invalid-feedback">
+                      {state.errors.password2}
+                    </div>
+                  </fieldset>
+                </fieldset>
+
+                <button type="submit" className="btn btn-lg btn-primary pull-xs-right"
+                  disabled={state.busy || !isReady(state)}>
+                  Sign up
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }}
+  </Store>
 );
 
 export default Register;
 
-const submit = async ({ $get, $set }) => {
-    const [api, username, email, password] =
-        $get('api', 'username', 'email', 'password');
-    
-    try {
-        await $set('busy', true);
+// This is very arbitrary, a real application likely needs
+// a more sophisticated form validation approach
+const validate = ({ username, email, password, password2 }) => ({
+  errors: {
+    username: username !== '' && username.length < 3
+      ? 'User name should be longer than 3 characters'
+      : null,
 
-        const user = await api.User.register(username, email, password);
-    
-        await $set({
-            user,
-            busy: false,
-        });
-        
-        const history = $get('history');
-        history.push('/');
-    }
-    catch (e) {
-        let errors = e?.response?.data?.errors;
-        
-        if (!errors) {
-            errors = { username: "Unspecified server error: " + e.toString() };
-        }
+    email: email !== '' && !emailRe.test(email)
+      ? 'E-mail address is invalid'
+      : null,
 
-        await $set({
-            errors,
-            busy: false,
-        });
-    }
-};
-
-const validate = ({ password, password2, ...state }) => ({
-    errors: {
-        // Additive here to keep errors returned from the back end
-        ...state.errors,
-        
-        // This is very arbitrary, just to showcase form validation
-        password: password !== '' && password.length < 3
-            ? 'Invalid password: should be longer than 3 characters!'
-            : null,
-        password2: password2 !== '' && password2 !== password
-            ? 'Passwords do not match!'
-            : null,
-    },
+    password: password !== '' && password.length < 3
+      ? 'Invalid password: should be longer than 3 characters'
+      : null,
+    password2: password2 !== '' && password2 !== password
+      ? 'Passwords do not match'
+      : null,
+  },
 });
 
-// Our form is valid when there are no errors *and* it is filled in.
-const isValid = $get => {
-    const errors = $get('errors');
-
-    for (const error of Object.values(errors)) {
-        if (error) {
-            return false;
-        }
-    }
-
-    const [username, email, password, password2] =
-        $get('username', 'email', 'password', 'password2');
-
-    if (username && email && password && password2) {
-        return true;
-    }
-
-    return false;
-};
+const isReady = ({ username, email, password, password2, ...state }) =>
+  !haveErrors(state) && username && email && password && password2;

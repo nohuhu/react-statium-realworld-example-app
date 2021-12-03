@@ -1,172 +1,105 @@
 import React from 'react';
-import ViewModel, { Bind, withBindings } from 'statium';
-import { Link, Redirect } from 'react-router-dom';
-import get from 'lodash.get';
+import Store from 'statium';
+import { Navigate, Link } from 'react-router-dom';
+
+import { login } from '../actions/user.js';
+import { emailRe, inputCls, haveErrors } from '../util/form.js';
+
+import LoadMask from './LoadMask.js';
+import ErrorList from './ErrorList.js';
 
 import './Login.css';
 
-const defaultState = {
-    email: '',
-    password: '',
-    inProgress: false,
-    errors: {},
+const initialState = {
+  email: '',
+  password: '',
+  busy: false,  
+  errors: {},
+  serverErrors: null,
 };
 
-const Login = ({ user }) => {
-    if (user) {
-        return <Redirect to="/" />;
+const Login = () => (
+  <Store tag="Login" state={initialState} reduceState={validate}>
+  {({ state, set, dispatch }) => {
+    if (state.user) {
+      return <Navigate replace to="/" />;
     }
-    
-    return (
-        <ViewModel id="Login"
-            initialState={defaultState}
-            applyState={validate}
-            controller={{
-                handlers: {
-                    login,
-                },
-            }}>
-            <div className="auth-page">
-                <div className="container page">
-                    <div className="row">
-                        <LoginForm />
-                    </div>
-                </div>
-            </div>
-        </ViewModel>
-    );
-};
 
-const LoginForm = () => (
-    <Bind props={[['email', true], ['password', true], 'errors', 'inProgress']} controller>
-        { ({ email, setEmail, password, setPassword, errors, inProgress }, { $dispatch }) => (
+    const onSubmit = e => {
+      e.preventDefault();
+      dispatch(login);
+    };
+
+    return (
+      <div className="auth-page">
+        <LoadMask loading={state.busy} />
+
+        <div className="container page">
+          <div className="row">
             <div className="col-md-6 offset-md-3 col-xs-12">
-                <h1 className="text-xs-center">
+              <h1 className="text-xs-center">Sign In</h1>
+              <p className="text-xs-center">
+                <Link to="/register">
+                  Need an account?
+                </Link>
+              </p>
+
+              <ErrorList errors={state.serverErrors || {}} />
+
+              <form onSubmit={onSubmit}>
+                <fieldset>
+                  <fieldset className="form-group">
+                    <input
+                      className={inputCls(state.errors.email)}
+                      type="email"
+                      placeholder="Email"
+                      value={state.email}
+                      onChange={e => set({ email: e.target.value, serverErrors: null })} />
+
+                    <div className="invalid-feedback">
+                      {state.errors.email}
+                    </div>
+                  </fieldset>
+
+                  <fieldset className="form-group">
+                    <input className={inputCls(state.errors.password)}
+                      type="password"
+                      placeholder="Password"
+                      value={state.password}
+                      onChange={e => set({ password: e.target.value, serverErrors: null })} />
+
+                    <div className="invalid-feedback">
+                      {state.errors.password}
+                    </div>
+                  </fieldset>
+
+                  <button type="submit" className="btn btn-lg btn-primary pull-xs-right"
+                    disabled={state.busy || !isReady(state)}
+                  >
                     Sign In
-                </h1>
-                <p className="text-xs-center">
-                    <Link to="/register">
-                        Need an account?
-                    </Link>
-                </p>
-            
-                <ErrorList errors={errors} />
-            
-                <form onSubmit={e => {
-                        e.preventDefault();
-                    
-                        $dispatch('login', { email, password });
-                    }}>
-                    <fieldset>
-                        <fieldset className="form-group">
-                            <input
-                                className={inputCls('email', errors)}
-                                type="email"
-                                placeholder="Email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)} />
-                            
-                            <div className="invalid-feedback">
-                                {errors.email}
-                            </div>
-                        </fieldset>
-                    
-                        <fieldset className="form-group">
-                            <input className={inputCls('password', errors)}
-                                type="password"
-                                placeholder="Password"
-                                value={password}
-                                onChange={e => setPassword(e.target.value)} />
-                            
-                            <div className="invalid-feedback">
-                                {errors.password}
-                            </div>
-                        </fieldset>
-                    
-                        <button
-                            className="btn btn-lg btn-primary pull-xs-right"
-                            type="submit"
-                            disabled={inProgress || haveFieldErrors(errors)}>
-                            Sign In
-                        </button>
-                    </fieldset>
-                </form>
+                  </button>
+                </fieldset>
+              </form>
             </div>
-        )}
-    </Bind>
+          </div>
+        </div>
+      </div>
+    );
+  }}
+  </Store>
 );
 
-const ErrorList = ({ errors }) => {
-    if (!errors) {
-        return null;
-    }
-    
-    return (
-        <ul className="error-messages">
-            {Object.keys(errors).map(err => (
-                <li key={err}>
-                    {err} {errors[err]}
-                </li>
-            ))}
-        </ul>
-    );
-};
+const validate = ({ email, password }) => ({
+  errors: {
+    email: email !== '' && !emailRe.test(email)
+      ? 'Invalid e-mail address'
+      : null,
+    password: password !== '' && password.length < 3
+      ? 'Invalid password: should be longer than 3 characters'
+      : null,
+  },
+});
 
-export default withBindings('user')(Login);
+const isReady = ({ email, password, ...state }) => !haveErrors(state) && email && password;
 
-const emailRe = /^.+@.+$/;
-
-const validate = ({ email, password, ...state }) => {
-    const { errors } = state;
-    
-    if (email !== '' && !emailRe.test(email)) {
-        errors.email = 'Invalid e-mail address';
-    }
-    else {
-        delete errors.email;
-    }
-    
-    if (password !== '' && password.length < 3) {
-        errors.password = 'Invalid password';
-    }
-    else {
-        delete errors.password;
-    }
-    
-    return {
-        ...state,
-        errors,
-    };
-};
-
-const inputCls = (name, errors) =>
-    `form-control form-control-lg ${errors[name] ? 'is-invalid' : 'is-valid'}`;
-
-const login = async ({ $get, $set, $dispatch }, { email, password }) => {
-    await $set('inProgress', true);
-    
-    const api = $get('api');
-    
-    try {
-        const data = await api.User.login(email, password);
-        
-        const user = get(data, 'user', null);
-        
-        $set({ user });
-    }
-    catch (e) {
-        $set({
-            inProgress: false,
-            errors: {
-                'Invalid e-mail or password': '',
-            },
-        });
-    }
-};
-
-const haveFieldErrors = errors => {
-    const copy = { ...errors };
-    delete copy["Invalid e-mail or password"];
-    
-    return Object.keys(copy).length > 0;
-};
+export default Login;

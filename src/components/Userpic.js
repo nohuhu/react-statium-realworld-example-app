@@ -7,8 +7,7 @@ import React from 'react';
 // Use default image URL for consistency.
 const defaultImage = "https://static.productionready.io/images/smiley-cyrus.jpg";
 
-const Userpic = ({ src, alt, ...props }) => (
-    <img src={src || defaultImage} alt={alt || ""} {...props} />
-);
+const Userpic = ({ src, alt, ...props }) =>
+  <img src={src || defaultImage} alt={alt || ""} {...props} />
 
 export default Userpic;

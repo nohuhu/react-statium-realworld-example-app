@@ -1,37 +1,40 @@
 import React from 'react';
+import { useStore } from 'statium';
 
-import Model from './Model.js';
+import Article from './Article.js';
 import Preview from './Preview.js';
 import Pager from './Pager.js';
 
-const ArticleList = ({ articles, ...props }) => {
-    if (!articles) {
-        return (
-            <div className="article-preview">
-                Loading...
-            </div>
-        );
-    }
-    
-    if (!articles.length) {
-        return (
-            <div className="article-preview">
-                There are no articles to view... yet.
-            </div>
-        );
-    }
-    
+const ArticleList = () => {
+  const { state: { articles } } = useStore();
+
+  if (!articles) {
     return (
-        <>
-            {articles.map(article => (
-                <Model key={article.slug} article={article}>
-                    <Preview />
-                </Model>
-            ))}
-            
-            <Pager {...props} />
-        </>
+      <div className="article-preview">
+        Loading...
+      </div>
     );
+  }
+
+  if (!articles.length) {
+    return (
+      <div className="article-preview">
+        There are no articles to view... yet.
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {articles.map(article =>
+        <Article key={article.slug} article={article}>
+          <Preview />
+        </Article>
+      )}
+
+      <Pager />
+    </>
+  );
 };
 
 export default ArticleList;

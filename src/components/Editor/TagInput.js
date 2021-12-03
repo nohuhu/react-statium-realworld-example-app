@@ -1,72 +1,72 @@
 import React from 'react';
-import ViewModel, { Bind } from 'statium';
+import Store from 'statium';
 
-const keyUp = async ({ $get, $set }, { value, setValue }) => {
-    const tagInput = $get('tagInput');
-    
-    const tagSet = new Set(value).add(tagInput);
-    
-    await setValue([...tagSet]);
-    await $set('tagInput', '');
+import { addTag, removeTag } from '../../actions/article.js';
+
+const addTagAndClearInput = async ({ state, set, dispatch }) => {
+  const { tagInput } = state;
+
+  await dispatch(addTag, tagInput);
+  await set({ tagInput: '' });
 };
 
-const removeTag = ({ $get, $set }, { value, setValue, tag }) => {
-    const tagSet = new Set(value);
-    tagSet.delete(tag);
-    
-    setValue([...tagSet]);
+const removeTagAndClearInput = async ({ set, dispatch }, tag) => {
+  await dispatch(removeTag, tag);
+  await set({ tagInput: '' });
 };
 
-const TagInput = ({ value, setValue }) => (
-    <ViewModel id="TagInput"
-        initialState={{ tagInput: '' }}
-        controller={{
-            handlers: {
-                keyUp,
-                removeTag,
-            },
-        }}>
-        <Bind props={[["tagInput", true]]} controller>
-            { ({ tagInput, setTagInput }, { $dispatch }) => (
-                <>
-                    <input className="form-control"
-                        type="text"
-                        value={tagInput}
-                        onChange={e => { setTagInput(e.target.value); }}
-                        onKeyUp={e => {
-                            // DOM event handlers are invoked synchronously,
-                            // and we need to call preventDefault() here
-                            // before dispatching ViewController event -
-                            // which is asynchronous and is scheduled for the next
-                            // even loop.
-                            // If we simply pass the event object to ViewController
-                            // handler, by the time it fires the event will have
-                            // caused the default action and preventDefault() call
-                            // will be ineffective.
-                            if (e.keyCode === 13) {
-                                e.preventDefault();
-                                
-                                $dispatch('keyUp', { value, setValue });
-                            }
-                        }} />
-                
-                    <div className="tag-list">
-                        {(value || []).map(tag => (
-                            <span key={tag} className="tag-default tag-pill">
-                                <i className="ion-close-round"
-                                    onClick={e => {
-                                        e.preventDefault();
-                                        
-                                        $dispatch('removeTag', { value, setValue, tag });
-                                    }} />
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
-                </>
-            )}
-        </Bind>
-    </ViewModel>
+const TagInput = () => (
+  <Store tag="TagInput" state={{ tagInput: '' }}>
+  {({ state, set, dispatch }) => {
+    const tagList = state.article?.tagList ?? [];
+
+    const onKeyUp = e => {
+      // React DOM event handlers are invoked synchronously,
+      // and we need to call preventDefault() here
+      // before dispatching a Store action which is
+      // asynchronous and is scheduled for the next event loop.
+      // If we simply pass the event object to Store action
+      // handler, by the time it fires the event will have
+      // caused the default action and preventDefault() call
+      // will be ineffective.
+      if (e.keyCode === 13) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (state.tagInput !== '') {
+          dispatch(addTagAndClearInput);
+        }
+      }
+    };
+
+    return (
+      <>
+        <input className="form-control"
+          type="text"
+          placeholder="Enter tags"
+          value={state.tagInput}
+          onChange={e => set({ tagInput: e.target.value })}
+          onKeyUp={onKeyUp}
+        />
+
+        <div className="tag-list">
+          {tagList.map(tag => (
+            <span key={tag} className="tag-default tag-pill">
+              <i className="ion-close-round"
+                onClick={e => {
+                  e.preventDefault();
+
+                  dispatch(removeTagAndClearInput, tag);
+                }}
+              />
+              {tag}
+            </span>
+          ))}
+        </div>
+      </>
+    )
+  }}
+  </Store>
 );
 
 export default TagInput;

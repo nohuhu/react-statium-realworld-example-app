@@ -1,38 +1,75 @@
 import React from 'react';
-import ViewModel, { Bind } from 'statium';
-import get from 'lodash.get';
+import Store from 'statium';
 
+import { postComment } from '../../actions/article.js';
+
+import LoadMask from '../LoadMask.js';
 import Userpic from '../Userpic.js';
+import ErrorList from '../ErrorList.js';
+
+const initialState = {
+  postingComment: false,
+  comment: '',
+  errors: null,
+};
+
+const postCommentAndClearInput = async ({ state, set, dispatch }, slug) => {
+  await set({ postingComment: true });
+
+  try {
+    await dispatch(postComment, { slug, comment: state.comment });
+
+    await set({
+      comment: '',
+      postingComment: false,
+    });
+  }
+  catch (e) {
+    await set({
+      errors: e.response?.data?.errors,
+      postingComment: false,
+    });
+  }
+};
 
 const CommentInput = ({ slug }) => (
-    <ViewModel id="Comment-form" initialState={{ comment: '' }}>
-        <Bind controller props={["user", ["comment", true]]}>
-            { ({ user, comment, setComment }, { $dispatch }) => (
-                <form className="card comment-form" onSubmit={e => {
-                        e.preventDefault();
-                        $dispatch('postComment', { slug, comment });
-                    }}>
-                    <div className="card-block">
-                        <textarea className="form-control"
-                            placeholder="Write a comment"
-                            value={comment}
-                            onChange={e => { setComment(e.target.value); }}
-                            rows="3" />
-                    </div>
+  <Store tag="Comment-form" state={initialState}>
+  {({ state: { user, comment, postingComment, errors }, set, dispatch }) => {
+    const onClick = async e => {
+      e.preventDefault();
+      dispatch(postCommentAndClearInput, slug);
+    };
 
-                    <div className="card-footer">
-                        <Userpic src={get(user, 'image')}
-                            className="comment-author-img"
-                            alt={get(user, 'username')} />
+    return (
+      <form className="card comment-form">
+        <LoadMask loading={postingComment} />
 
-                        <button className="btn btn-sm btn-primary" type="submit">
-                            Post comment
-                        </button>
-                    </div>
-                </form>
-            )}
-        </Bind>
-    </ViewModel>
+        { errors && <ErrorList errors={errors} /> }
+
+        <div className="card-block">
+          <textarea className="form-control"
+            placeholder="Write a comment"
+            value={comment}
+            onChange={e => set({ comment: e.target.value }) }
+            rows="3" />
+        </div>
+
+        <div className="card-footer">
+          <Userpic src={user?.image}
+            className="comment-author-img"
+            alt={user?.username} />
+
+          <button className="btn btn-sm btn-primary" type="button"
+            disabled={postingComment || comment === ''}
+            onClick={onClick}
+          >
+            Post comment
+          </button>
+        </div>
+      </form>
+    )
+  }}
+  </Store>
 );
 
 export default CommentInput;

@@ -1,76 +1,81 @@
 import React from 'react';
-import { withBindings } from 'statium';
+import { bind } from 'statium';
 import { Link } from 'react-router-dom';
-import get from 'lodash.get';
+
+import NavLink from './NavLink.js';
+
+import { appName } from '../selectors/global.js';
+import { getUser } from '../selectors/user.js';
 
 import Userpic from './Userpic.js';
 
 const LoggedOut = () => (
-    <ul className="nav navbar-nav pull-xs-right">
-        <li className="nav-item">
-            <Link to="/" className="nav-link">
-                Home
-            </Link>
-        </li>
-        
-        <li className="nav-item">
-            <Link to="/login" className="nav-link">
-                Sign in
-            </Link>
-        </li>
-        
-        <li className="nav-item">
-            <Link to="/register" className="nav-link">
-                Sign up
-            </Link>
-        </li>
-    </ul>
+  <ul className="nav navbar-nav pull-xs-right">
+    <li className="nav-item">
+      <NavLink to="/">
+        Home
+      </NavLink>
+    </li>
+
+    <li className="nav-item">
+      <NavLink to="/login">
+        Sign in
+      </NavLink>
+    </li>
+
+    <li className="nav-item">
+      <NavLink to="/register">
+        Sign up
+      </NavLink>
+    </li>
+  </ul>
 );
 
 const LoggedIn = ({ user }) => (
-    <ul className="nav navbar-nav pull-xs-right">
-        <li className="nav-item">
-            <Link to="/" className="nav-link">
-                Home
-            </Link>
-        </li>
-        
-        <li className="nav-item">
-            <Link to="/editor" className="nav-link">
-                <i className="ion-compose" />&nbsp;New Post
-            </Link>
-        </li>
-        
-        <li className="nav-item">
-            <Link to="/settings" className="nav-link">
-                <i className="ion-gear-a" />&nbsp;Settings
-            </Link>
-        </li>
-        
-        <li className="nav-item">
-            <Link to={`/@${user.username}`} className="nav-link">
-                <Userpic src={get(user, 'image')}
-                    className="user-pic"
-                    alt={get(user, 'username')} />
-                <span>
-                    &nbsp;
-                    { get(user, 'username') }
-                </span>
-            </Link>
-        </li>
-    </ul>
+  <ul className="nav navbar-nav pull-xs-right">
+    <li className="nav-item">
+      <NavLink to="/">
+        Home
+      </NavLink>
+    </li>
+
+    <li className="nav-item">
+      <NavLink to="/editor">
+        <i className="ion-compose" />&nbsp;New Article
+      </NavLink>
+    </li>
+
+    <li className="nav-item">
+      <NavLink to="/settings">
+        <i className="ion-gear-a" />&nbsp;Settings
+      </NavLink>
+    </li>
+
+    <li className="nav-item">
+      <NavLink to={`/@${user.username}`}>
+        <Userpic src={user.image}
+          className="user-pic"
+          alt={user.username} />
+        <span>
+          &nbsp;
+          {user.username}
+        </span>
+      </NavLink>
+    </li>
+  </ul>
 );
 
-const Header = ({ appName, user }) => (
-    <nav className="navbar navbar-light">
-        <div className="container">
-            <Link to="/" className="navbar-brand">
-                {appName.toLowerCase()}
-            </Link>
-        </div>
-        
-        { user ? <LoggedIn user={user} /> : <LoggedOut /> }
-    </nav>
+export const Header = ({ user }) => (
+  <nav className="navbar navbar-light">
+    <div className="container">
+      <Link to="/" className="navbar-brand">
+        {appName.toLowerCase()}
+      </Link>
+      {user ? <LoggedIn user={user} /> : <LoggedOut />}
+    </div>
+  </nav>
 );
 
-export default withBindings(['appName', 'user'])(Header);
+export default bind({
+  user: getUser,
+})(Header);
