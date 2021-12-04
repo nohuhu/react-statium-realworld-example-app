@@ -1,8 +1,8 @@
 import React from 'react';
 
-const TagList = ({ tagList = [] }) => (
+const Tags = ({ tags = [] }) => (
   <ul className="tag-list">
-    {tagList.map(tag => (
+    {tags.map(tag => (
       <li className="tag-default tag-pill tag-outline" key={tag}>
         {tag}
       </li>
@@ -10,4 +10,4 @@ const TagList = ({ tagList = [] }) => (
   </ul>
 );
 
-export default TagList;
+export default Tags;

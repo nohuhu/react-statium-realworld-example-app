@@ -1,41 +1,14 @@
 import React, { useEffect } from 'react';
-import Store, { useStore } from 'statium';
-import { useParams } from 'react-router';
+import { useStore } from 'statium';
 
-import LoadMask from '../LoadMask.js';
-import ErrorList from '../ErrorList.js';
-import TagInput from './TagInput.js';
+import LoadMask from '../LoadMask.jsx';
+import ErrorList from '../ErrorList.jsx';
+import TagInput from './TagInput.jsx';
 
-import { emptyArticle, loadArticle, postArticle } from '../../actions/article.js';
+import { loadArticle, postArticle } from '../../actions/article.js';
 
-const initialState = {
-  busy: false,
-  errors: null,
-  article: emptyArticle,
-};
-
-const Editor = () => {
-  const { slug } = useParams();
-
-  // Note that the slug parameter comes from the URL, and changes dynamically
-  // between renderings. Because of this, we cannot make it a Store state key
-  // and pass as data key instead so that it will be available for all downstream
-  // components without having to expose them to implementation detail of where
-  // this parameter comes from.
-  return (
-    <Store tag="Editor" data={{ slug }} state={initialState}>
-      <div className="editor-page">
-        <div className="container page">
-          <div className="row">
-            <div className="col-md-10 offset-md-1 col-xs-12">
-              <EditorForm />
-            </div>
-          </div>
-        </div>
-      </div>
-    </Store>
-  );
-};
+// The most basic check is having non-empty title and body
+const isReady = ({ article }) => article && article.title && article.body;
 
 export const EditorForm = () => {
   const { data, state, set, dispatch } = useStore();
@@ -114,7 +87,4 @@ export const EditorForm = () => {
   );
 };
 
-// The most basic check is having non-empty title and body
-const isReady = ({ article }) => article && article.title && article.body;
-
-export default Editor;
+export default EditorForm;

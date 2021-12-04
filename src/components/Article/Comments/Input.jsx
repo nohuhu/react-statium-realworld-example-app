@@ -1,11 +1,11 @@
 import React from 'react';
 import Store from 'statium';
 
-import { postComment } from '../../actions/article.js';
+import { postComment } from '../../../actions/article.js';
 
-import LoadMask from '../LoadMask.js';
-import Userpic from '../Userpic.js';
-import ErrorList from '../ErrorList.js';
+import LoadMask from '../../LoadMask.jsx';
+import Userpic from '../../Userpic.jsx';
+import ErrorList from '../../ErrorList.jsx';
 
 const initialState = {
   postingComment: false,

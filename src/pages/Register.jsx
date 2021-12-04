@@ -3,10 +3,10 @@ import Store from 'statium';
 import { Link } from 'react-router-dom';
 
 import { register } from '../actions/user.js';
-import { emailRe, inputCls, haveErrors } from '../util/form.js';
+import { emailRe, inputCls, haveErrors } from '../misc/form.js';
 
-import ErrorList from './ErrorList.js';
-import LoadMask from './LoadMask.js';
+import ErrorList from '../components/ErrorList.jsx';
+import LoadMask from '../components/LoadMask.jsx';
 
 const initialState = {
   busy: false,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import LoadMask from './LoadMask.js';
+import LoadMask from './LoadMask.jsx';
 
 describe("LoadMask", () => {
   it("should render hidden by default", () => {

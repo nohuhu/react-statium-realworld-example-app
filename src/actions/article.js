@@ -22,10 +22,8 @@ export const loadArticle = async ({ state, set }, { slug, loadComments, loadProf
       // the Following button -- need to know if the current user follows that
       // author or not. It doesn't make sense to make additional request when
       // the author is current user.
-      if (loadProfile) {
-        if (article.author.username !== state.user.username) {
-          article.author = await api.Profile.get(article.author.username);
-        }
+      if (loadProfile && article.author.username !== state.user.username) {
+        article.author = await api.Profile.get(article.author.username);
       }
 
       await set({
@@ -163,7 +161,7 @@ export const setTab = async ({ data, set }, to) => {
 
   // We need to reset page and limit explicitly because these values are synchronized
   // with the URL search parameters, and are retained when URL changes via programmatic
-  // navigation below.
+  // navigation below. We don't want them to be retained.
   await set({
     page: 0,
     limit: defaultLimit,
@@ -185,4 +183,3 @@ const doFavors = async (type, { state, set }, slug) => {
 
 export const favorite = (...args) => doFavors('favorite', ...args);
 export const unfavorite = (...args) => doFavors('unfavorite', ...args);
-

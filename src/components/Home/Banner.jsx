@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { appName } from '../../selectors/global.js';
+import { appName } from '../../misc/constants.js';
 
 const Banner = () => (
   <div className="banner">

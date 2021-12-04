@@ -2,16 +2,25 @@ import React from 'react';
 import Store, { useStore } from 'statium';
 import { useParams } from 'react-router';
 
-import LoadMask from '../LoadMask.js';
-import Tab from '../Tab.js'
+import LoadMask from '../components/LoadMask.jsx';
+import Tab from '../components/Tab.jsx'
 
-import Banner from './Banner.js';
-import FeedView from '../Article/Feed.js';
-import Tags from './Tags.js';
+import Banner from '../components/Home/Banner.jsx';
+import FeedView from '../components/Article/Feed.jsx';
+import Tags from '../components/Home/Tags.jsx';
 
-import { setTab } from '../../actions/article.js';
+import { setTab } from '../actions/article.js';
 
 const defaultLimit = 10;
+
+// Article feeds can display arbitrary number of articles
+const articleLimitOptions = [
+  { value: 10 },
+  { value: 25 },
+  { value: 50 },
+  { value: 100 },
+  { value: Infinity, text: "All" },
+];
 
 const initialState = {
   busy: false,
@@ -42,7 +51,15 @@ const Home = ({ tab }) => {
   );
 
   return (
-    <Store tag="Home" data={{ tab, selectedTag, defaultLimit }} state={initialState}>
+    <Store tag="Home"
+      data={{
+        tab,
+        selectedTag,
+        defaultLimit,
+        articleLimitOptions,
+      }}
+      state={initialState}
+    >
     {({ state: { user, busy } }) => (
       <div className="home-page">
         {!user && <Banner />}

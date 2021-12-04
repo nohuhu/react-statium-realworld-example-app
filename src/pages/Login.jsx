@@ -3,10 +3,10 @@ import Store from 'statium';
 import { Navigate, Link } from 'react-router-dom';
 
 import { login } from '../actions/user.js';
-import { emailRe, inputCls, haveErrors } from '../util/form.js';
+import { emailRe, inputCls, haveErrors } from '../misc/form.js';
 
-import LoadMask from './LoadMask.js';
-import ErrorList from './ErrorList.js';
+import LoadMask from '../components/LoadMask.jsx';
+import ErrorList from '../components/ErrorList.jsx';
 
 import './Login.css';
 

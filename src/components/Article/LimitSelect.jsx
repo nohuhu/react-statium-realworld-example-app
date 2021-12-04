@@ -5,7 +5,6 @@ const defaultOptions = [
   { value: 10 },
   { value: 25 },
   { value: 50 },
-  { value: 10000, text: "All" },
 ];
 
 const LimitSelect = () => {

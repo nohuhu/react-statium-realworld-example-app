@@ -2,8 +2,8 @@ import React from 'react';
 import { useStore } from 'statium';
 import { Link } from 'react-router-dom';
 
-import CommentInput from './CommentInput.js';
-import CommentView from './CommentView.js';
+import CommentInput from './Input.jsx';
+import CommentCard from './Comment.jsx';
 
 const SignIn = () => (
   <p>
@@ -15,19 +15,6 @@ const SignIn = () => (
     &nbsp;
     to add comments on this article.
   </p>
-);
-
-const CommentList = ({ user, slug, articleAuthor, comments = [] }) => (
-  <>
-    {comments.map((comment, idx) =>
-      <CommentView
-        key={comment?.id ?? idx}
-        user={user}
-        slug={slug}
-        comment={comment}
-        articleAuthor={articleAuthor} />
-    )}
-  </>
 );
 
 const Comments = () => {
@@ -42,10 +29,14 @@ const Comments = () => {
     <div className="col-xs-12 col-md-8 offset-md-2">
       {user ? <CommentInput slug={slug} /> : <SignIn />}
 
-      <CommentList user={user}
-        slug={slug}
-        articleAuthor={articleAuthor}
-        comments={comments} />
+      {comments.map((comment, idx) =>
+        <CommentCard
+          key={comment?.id ?? idx}
+          user={user}
+          slug={slug}
+          comment={comment}
+          articleAuthor={articleAuthor} />
+      )}
     </div>
   );
 };

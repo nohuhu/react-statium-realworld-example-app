@@ -2,11 +2,11 @@ import React from 'react';
 import { bind } from 'statium';
 import { Link } from 'react-router-dom';
 
-import Userpic from '../Userpic.js';
-import TagList from './TagList.js';
-import FavIcon from './FavIcon.js';
+import Userpic from '../Userpic.jsx';
+import Tags from './Tags.jsx';
+import FavIcon from './FavIcon.jsx';
 
-const Preview = ({ slug, title, description, authorUser, authorPic, createdAt, tagList }) => (
+const ArticleStub = ({ slug, title, description, authorUser, authorPic, createdAt, tagList }) => (
   <div className="article-preview">
     <div className="article-meta">
       <Link to={`/@${authorUser}`}>
@@ -41,12 +41,12 @@ const Preview = ({ slug, title, description, authorUser, authorPic, createdAt, t
         Read more...
       </span>
 
-      <TagList tagList={tagList} />
+      <Tags tagList={tagList} />
     </Link>
   </div>
 );
 
-export default bind(({ state: { article } }) => ({
+const selector = ({ state: { article } }) => ({
   title: article?.title,
   description: article?.description,
   slug: article?.slug,
@@ -56,4 +56,6 @@ export default bind(({ state: { article } }) => ({
   createdAt: article?.createdAt,
   favorited: article?.favorited,
   favoritesCount: article?.favoritesCount,
-}))(Preview);
+});
+
+export default bind(selector)(ArticleStub);

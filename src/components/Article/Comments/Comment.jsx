@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 import marked from 'marked';
 import { sanitize } from 'dompurify';
 
-import { deleteComment } from '../../actions/article.js';
+import { deleteComment } from '../../../actions/article.js';
 
-import Userpic from '../Userpic.js';
+import Userpic from '../../Userpic.jsx';
 
 const DeleteButton = ({ slug, commentId }) => {
   const { dispatch } = useStore();
@@ -23,7 +23,7 @@ const DeleteButton = ({ slug, commentId }) => {
   );
 }
 
-const CommentView = ({ user, slug, articleAuthor, comment }) => {
+const CommentCard = ({ user, slug, articleAuthor, comment }) => {
   const currentUsername = user?.username;
   const commentId = comment?.id;
   const commentAuthor = comment?.author?.username;
@@ -62,4 +62,4 @@ const CommentView = ({ user, slug, articleAuthor, comment }) => {
   );
 };
 
-export default CommentView;
+export default CommentCard;

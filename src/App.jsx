@@ -5,17 +5,18 @@ import Store from 'statium';
 import getApi from './api.js';
 import { setUser } from './actions/user.js';
 
-import LoadMask from './components/LoadMask.js';
-import Header from './components/Header.js';
-import Footer from './components/Footer.js';
-import Home from './components/Home/Home.js';
-import Login from './components/Login.js';
-import Logout from './components/Logout.js';
-import Register from './components/Register.js';
-import Article from './components/Article/ArticlePage.js';
-import Editor from './components/Editor/Editor.js';
-import Profile from './components/Profile.js';
-import Settings from './components/Settings.js';
+import LoadMask from './components/LoadMask.jsx';
+import Header from './components/Header/Header.jsx';
+import Footer from './components/Footer.jsx';
+
+import Home from './pages/Home.jsx';
+import Login from './pages/Login.jsx';
+import Logout from './pages/Logout.jsx';
+import Register from './pages/Register.jsx';
+import Article from './pages/Article.jsx';
+import Editor from './pages/Editor.jsx';
+import Profile from './pages/Profile.jsx';
+import Settings from './pages/Settings.jsx';
 
 const initialState = {
   user: null,

@@ -1,13 +1,12 @@
 import React from 'react';
-import { bind } from 'statium';
+import { useStore } from 'statium';
 import { Link } from 'react-router-dom';
 
-import NavLink from './NavLink.js';
+import NavLink from './NavLink.jsx';
 
-import { appName } from '../selectors/global.js';
-import { getUser } from '../selectors/user.js';
+import { appName } from '../../misc/constants.js';
 
-import Userpic from './Userpic.js';
+import Userpic from '../Userpic.jsx';
 
 const LoggedOut = () => (
   <ul className="nav navbar-nav pull-xs-right">
@@ -65,17 +64,19 @@ const LoggedIn = ({ user }) => (
   </ul>
 );
 
-export const Header = ({ user }) => (
-  <nav className="navbar navbar-light">
-    <div className="container">
-      <Link to="/" className="navbar-brand">
-        {appName.toLowerCase()}
-      </Link>
-      {user ? <LoggedIn user={user} /> : <LoggedOut />}
-    </div>
-  </nav>
-);
+export const Header = () => {
+  const { state: { user } } = useStore();
 
-export default bind({
-  user: getUser,
-})(Header);
+  return (
+    <nav className="navbar navbar-light">
+      <div className="container">
+        <Link to="/" className="navbar-brand">
+          {appName.toLowerCase()}
+        </Link>
+        {user ? <LoggedIn user={user} /> : <LoggedOut />}
+      </div>
+    </nav>
+  );
+}
+
+export default Header;

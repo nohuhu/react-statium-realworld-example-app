@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import Store, { useStore } from 'statium';
 import { Link, useParams } from 'react-router-dom';
 
-import Tab from './Tab.js';
-import LoadMask from './LoadMask.js';
-import Userpic from './Userpic.js';
-import FeedView from './Article/Feed.js';
-import FollowButton from './FollowButton.js';
+import Tab from '../components/Tab.jsx';
+import LoadMask from '../components/LoadMask.jsx';
+import Userpic from '../components/Userpic.jsx';
+import FeedView from '../components/Article/Feed.jsx';
+import FollowButton from '../components/FollowButton.jsx';
 
 import { loadProfile } from '../actions/profile.js';
 import { setTab } from '../actions/article.js';

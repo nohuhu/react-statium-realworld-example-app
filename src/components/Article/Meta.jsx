@@ -2,22 +2,22 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from 'statium';
 
-import { canModify } from '../../selectors/article.js';
 import { deleteArticle } from '../../actions/article.js';
 
-import Userpic from '../Userpic.js';
-import FavIcon from './FavIcon.js';
-import FollowButton from '../FollowButton.js';
+import Userpic from '../Userpic.jsx';
+import FavIcon from './FavIcon.jsx';
+import FollowButton from '../FollowButton.jsx';
 
 const Meta = () => {
   const { state, dispatch } = useStore();
 
-  const editable = canModify({ state });
   const slug = state.article?.slug;
+  const currentUser = state.user?.username;
   const authorUsername = state.article?.author?.username;
   const authorImage = state.article?.author?.image;
   const followingAuthor = state.article?.author?.following;
   const createdAt = state.article?.createdAt;
+  const editable = currentUser && authorUsername && currentUser === authorUsername;
 
   return (
     <div className="article-meta">

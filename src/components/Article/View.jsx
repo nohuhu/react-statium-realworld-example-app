@@ -1,47 +1,14 @@
 import React, { useEffect } from 'react';
-import Store, { useStore } from 'statium';
-import { useParams } from 'react-router';
+import { useStore } from 'statium';
 
 import marked from 'marked';
 import { sanitize } from 'dompurify';
 
-import Meta from './Meta.js';
-import TagList from './TagList.js';
-import Comments from './Comments.js';
-
-import LoadMask from '../LoadMask.js';
-import ErrorList from '../ErrorList.js';
+import Meta from './Meta.jsx';
+import Tags from './Tags.jsx';
+import Comments from './Comments/Comments.jsx';
 
 import { loadArticle } from '../../actions/article.js';
-
-const ArticlePage = () => {
-  const { slug } = useParams();
-
-  const initialState = {
-    busy: true,
-    article: null,
-    errors: null,
-  };
-
-  // Note that the slug parameter comes from the URL, and changes dynamically
-  // between renderings. Because of this, we cannot make it a Store state key
-  // and pass as data key instead so that it will be available for all downstream
-  // components without having to expose them to implementation detail of where
-  // this parameter comes from.
-  return (
-    <Store tag="ArticlePage" data={{ slug }} state={initialState}>
-    {({ state: { busy, errors } }) => (
-      <>
-        <LoadMask loading={busy} />
-
-        {errors && <ErrorList errors={errors} />}
-
-        <ArticleView />
-      </>
-    )}
-    </Store>
-  );
-};
 
 const ArticleView = () => {
   const { data, state, dispatch } = useStore();
@@ -77,7 +44,7 @@ const ArticleView = () => {
           <div className="col-md-12" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
         </div>
 
-        <TagList tagList={article.tagList} />
+        <Tags tags={article.tagList} />
 
         <hr />
 
@@ -95,5 +62,4 @@ const ArticleView = () => {
   );
 };
 
-export default ArticlePage;
-
+export default ArticleView;

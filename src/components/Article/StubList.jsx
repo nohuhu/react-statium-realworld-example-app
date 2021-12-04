@@ -1,11 +1,10 @@
 import React from 'react';
-import { useStore } from 'statium';
+import Store, { useStore } from 'statium';
 
-import Article from './Article.js';
-import Preview from './Preview.js';
-import Pager from './Pager.js';
+import ArticleStub from './Stub.jsx';
+import Pager from './Pager.jsx';
 
-const ArticleList = () => {
+const ArticleStubList = () => {
   const { state: { articles } } = useStore();
 
   if (!articles) {
@@ -27,9 +26,9 @@ const ArticleList = () => {
   return (
     <>
       {articles.map(article =>
-        <Article key={article.slug} article={article}>
-          <Preview />
-        </Article>
+        <Store key={article.slug}  tag={`Article-${article.slug}`} state={{ article }}>
+          <ArticleStub />
+        </Store>
       )}
 
       <Pager />
@@ -37,4 +36,4 @@ const ArticleList = () => {
   );
 };
 
-export default ArticleList;
+export default ArticleStubList;
