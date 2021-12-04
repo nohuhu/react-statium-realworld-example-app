@@ -3,7 +3,11 @@
 exports[`Application renders 1`] = `
 <App>
   <Store
-    data={Object {}}
+    data={
+      Object {
+        "navigate": [Function],
+      }
+    }
     onMount={[Function]}
     state={
       Object {
@@ -19,7 +23,6 @@ exports[`Application renders 1`] = `
             "favorite": [Function],
             "favoritedBy": [Function],
             "feed": [Function],
-            "get": [Function],
             "getComments": [Function],
             "postComment": [Function],
             "unfavorite": [Function],

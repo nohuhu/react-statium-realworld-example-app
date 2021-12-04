@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'test/enzyme.js';
 import Store from 'statium';
 
-import Register from './Register.js';
+import Register from './Register.jsx';
 
 describe("Register form", () => {
   describe("UI behavior", () => {

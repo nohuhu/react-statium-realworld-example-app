@@ -30,7 +30,7 @@
   },
   "jest": {
     "modulePaths": [
-      "<rootDir>/src"
+      "<rootDir>/src", "<rootDir>/node_modules"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/test/setup.js"
@@ -43,7 +43,7 @@
     ],
     "testEnvironment": "jsdom",
     "transform": {
-      "^.+\\.js$": "babel-jest"
+      "^.+\\.jsx?$": "babel-jest"
     },
     "moduleNameMapper": {
       "^test/(.+)$": "<rootDir>/test/$1",

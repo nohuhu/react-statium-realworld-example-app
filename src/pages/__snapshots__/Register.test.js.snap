@@ -101,6 +101,13 @@ exports[`Register form UI behavior should enable submit button when filled in an
                 </a>
               </Link>
             </p>
+            <ErrorList
+              errors={Object {}}
+            >
+              <ul
+                className="error-messages"
+              />
+            </ErrorList>
             <form
               onSubmit={[Function]}
             >
@@ -247,6 +254,13 @@ exports[`Register form UI behavior should render 1`] = `
                 </a>
               </Link>
             </p>
+            <ErrorList
+              errors={Object {}}
+            >
+              <ul
+                className="error-messages"
+              />
+            </ErrorList>
             <form
               onSubmit={[Function]}
             >

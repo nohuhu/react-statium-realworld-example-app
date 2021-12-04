@@ -3,8 +3,6 @@ import { useStore, useState } from 'statium';
 
 import { follow, unfollow } from '../actions/profile.js';
 
-export const disableButton = Symbol('disableButton');
-
 const FollowButton = ({ username, following }) => {
   const { dispatch } = useStore();
 
@@ -17,7 +15,7 @@ const FollowButton = ({ username, following }) => {
   // the first argument is the default state value (same as React.useState),
   // the second argument is the Store key for this state.
   // We import the key in the test and use it to manipulate the component.
-  const [disabled, setDisabled] = useState(false, disableButton);
+  const [disabled, setDisabled] = useState(false, 'disableButton');
 
   const cls = `btn btn-sm action-btn ${following ? 'btn-secondary' : 'btn-outline-secondary'}`;
   const style = { opacity: disabled ? '0.5' : '1' };
