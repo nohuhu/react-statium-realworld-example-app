@@ -1,9 +1,7 @@
 import React from 'react';
 import { useStore, useState } from 'statium';
 
-import { follow, unfollow } from '../actions/profile.js';
-
-const FollowButton = ({ username, following }) => {
+const FollowButton = ({ username, following, follow, unfollow }) => {
   const { dispatch } = useStore();
 
   // This state value is transient and local, it is only used when we are making

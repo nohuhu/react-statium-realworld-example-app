@@ -7,10 +7,13 @@ import LoadMask from '../../LoadMask.jsx';
 import Userpic from '../../Userpic.jsx';
 import ErrorList from '../../ErrorList.jsx';
 
+// Use a Symbol key to avoid collisions with parent Store keys
+const errors = Symbol('errors');
+
 const initialState = {
   postingComment: false,
   comment: '',
-  errors: null,
+  [errors]: null,
 };
 
 const postCommentAndClearInput = async ({ state, set, dispatch }, slug) => {
@@ -26,7 +29,7 @@ const postCommentAndClearInput = async ({ state, set, dispatch }, slug) => {
   }
   catch (e) {
     await set({
-      errors: e.response?.data?.errors,
+      [errors]: e.response?.data?.errors,
       postingComment: false,
     });
   }
@@ -34,7 +37,9 @@ const postCommentAndClearInput = async ({ state, set, dispatch }, slug) => {
 
 const CommentInput = ({ slug }) => (
   <Store tag="Comment-form" state={initialState}>
-  {({ state: { user, comment, postingComment, errors }, set, dispatch }) => {
+  {({ state, set, dispatch }) => {
+    const { user, comment, postingComment } = state;
+
     const onClick = async e => {
       e.preventDefault();
       dispatch(postCommentAndClearInput, slug);
@@ -44,7 +49,7 @@ const CommentInput = ({ slug }) => (
       <form className="card comment-form">
         <LoadMask loading={postingComment} />
 
-        { errors && <ErrorList errors={errors} /> }
+        { state[errors] && <ErrorList errors={state[errors]} /> }
 
         <div className="card-block">
           <textarea className="form-control"

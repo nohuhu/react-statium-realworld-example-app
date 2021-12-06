@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from 'statium';
 
-import { deleteArticle } from '../../actions/article.js';
+import { deleteArticle, followAuthor, unfollowAuthor } from '../../actions/article.js';
 
 import Userpic from '../Userpic.jsx';
 import FavIcon from './FavIcon.jsx';
@@ -40,7 +40,10 @@ const Meta = () => {
         {/* We cannot follow users or favorite articles when not logged in */}
         {!editable && user && (
           <>
-            <FollowButton username={authorUsername} following={followingAuthor} />
+            <FollowButton username={authorUsername}
+              following={followingAuthor}
+              follow={followAuthor}
+              unfollow={unfollowAuthor} />
 
             &nbsp;
 

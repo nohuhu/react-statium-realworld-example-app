@@ -8,7 +8,7 @@ import Userpic from '../components/Userpic.jsx';
 import FeedView from '../components/Article/Feed.jsx';
 import FollowButton from '../components/FollowButton.jsx';
 
-import { loadProfile } from '../actions/profile.js';
+import { loadProfile, follow, unfollow } from '../actions/profile.js';
 import { setTab } from '../actions/article.js';
 
 const defaultLimit = 5;
@@ -66,7 +66,7 @@ const ProfileView = () => {
   if (!profile) {
     return null;
   }
-  
+
   const tabs = (
     <>
       <Tab id="authored"
@@ -106,8 +106,11 @@ const ProfileView = () => {
                 </Link>
               }
 
-              {!busy && username !== profile.username && user &&
-                <FollowButton username={username} following={following} />
+              {!busy && user && !isCurrentUser &&
+                <FollowButton username={username}
+                  following={following}
+                  follow={follow}
+                  unfollow={unfollow} />
               }
             </div>
           </div>

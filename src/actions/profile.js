@@ -9,23 +9,13 @@ export const loadProfile = async ({ state, set, dispatch }, username) => {
 };
 
 export const follow = async ({ state, set }, username) => {
-  await set({ disableFollowButton: true });
-
   const profile = await state.api.Profile.follow(username);
 
-  await set({
-    profile,
-    disableFollowButton: false,
-  });
+  await set({ profile });
 };
 
 export const unfollow = async ({ state, set }, username) => {
-  await set({ disableFollowButton: true });
-
   const profile = await state.api.Profile.unfollow(username);
 
-  await set({
-    profile,
-    disableFollowButton: false,
-  });
+  await set({ profile });
 };

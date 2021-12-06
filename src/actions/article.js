@@ -183,3 +183,17 @@ const doFavors = async (type, { state, set }, slug) => {
 
 export const favorite = (...args) => doFavors('favorite', ...args);
 export const unfavorite = (...args) => doFavors('unfavorite', ...args);
+
+const doFollowing = async (type, { state, set }, username) => {
+  const profile = await state.api.Profile[type](username);
+
+  await set({
+    article: {
+      ...state.article,
+      author: profile,
+    }
+  });
+};
+
+export const followAuthor = (...args) => doFollowing('follow', ...args);
+export const unfollowAuthor = (...args) => doFollowing('unfollow', ...args);
