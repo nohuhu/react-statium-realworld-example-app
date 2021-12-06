@@ -8,6 +8,7 @@ import { setUser } from './actions/user.js';
 import LoadMask from './components/LoadMask.jsx';
 import Header from './components/Header/Header.jsx';
 import Footer from './components/Footer.jsx';
+import { AlertProvider, Alerts } from './components/Alerts.jsx'
 
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
@@ -39,8 +40,9 @@ const App = () => {
         }
 
         return (
-          <>
+          <AlertProvider>
             <Header />
+            <Alerts />
 
             <Routes>
               <Route path="/login" element={<Login />} />
@@ -58,7 +60,7 @@ const App = () => {
             </Routes>
 
             <Footer />
-          </>
+          </AlertProvider>
         );
       }}
     </Store>

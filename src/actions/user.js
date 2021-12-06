@@ -1,4 +1,5 @@
 import getApi from '../api.js';
+import { displayAlert } from './alerts.js';
 
 export const setUser = async ({ set }, user) => {
   const token = user?.token;
@@ -56,6 +57,11 @@ export const register = async ({ data, state, set, dispatch }) => {
     // We get here only after the new user record has been created on the server
     await dispatch(setUser, user);
     await set({ busy: false });
+
+    await dispatch(displayAlert, {
+      type: "success",
+      text: `Successfully created user ${username}!`,
+    })
 
     data.navigate('/');
   }
