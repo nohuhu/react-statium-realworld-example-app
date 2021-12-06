@@ -55,8 +55,9 @@ const ProfileView = () => {
   const { data, state, dispatch } = useStore();
 
   const { tab, username } = data;
-  const { busy, profile } = state;
+  const { busy, profile, user } = state;
   const { image, bio, following } = profile || {};
+  const isCurrentUser = username === user?.username;
 
   useEffect(() => {
     dispatch(loadProfile, username);
@@ -70,15 +71,16 @@ const ProfileView = () => {
     <>
       <Tab id="authored"
           to={`/@${username}`}
-          name="My Articles"
+          name={isCurrentUser ? "My Articles" : `${username}'s Articles`}
           currentTab={tab}
           setTab={setTab} />
       
-      <Tab id="favorites"
+      {isCurrentUser && <Tab id="favorites"
         to={`/@${username}/favorites`}
         name="Favorited Articles"
         currentTab={tab}
         setTab={setTab} />
+      }
     </>
   );
 
@@ -95,7 +97,7 @@ const ProfileView = () => {
               </h4>
               <p>{bio}</p>
 
-              {!busy && username === profile.username &&
+              {!busy && username === profile.username && isCurrentUser &&
                 <Link to="/settings"
                   className="btn btn-sm btn-outline-secondary action-btn">
                   <i className="ion-gear-a" />
@@ -104,7 +106,7 @@ const ProfileView = () => {
                 </Link>
               }
 
-              {!busy && username !== profile.username &&
+              {!busy && username !== profile.username && user &&
                 <FollowButton username={username} following={following} />
               }
             </div>

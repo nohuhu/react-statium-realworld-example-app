@@ -17,11 +17,11 @@ const FeedView = ({ tabs }) => {
   const { data, state, dispatch } = useStore();
 
   const { tab, selectedTag, username, defaultLimit } = data;
-  const { page, limit, articles, articlesCount } = state;
+  const { user, page, limit, articles, articlesCount } = state;
 
   useEffect(() => {
     dispatch(loadArticles, { tab, selectedTag, username, page, limit });
-  }, [tab, selectedTag, username, page, limit, dispatch]);
+  }, [user, tab, selectedTag, username, page, limit, dispatch]);
 
   return (
     <>

@@ -1,8 +1,15 @@
-export const setUser = async ({ set }, user) => {
-  await set({ user });
+import getApi from '../api.js';
 
-  if (user && user.token) {
-    window.localStorage.setItem('jwtToken', user.token);
+export const setUser = async ({ set }, user) => {
+  const token = user?.token;
+
+  // This will return non-authenticated API if token is undefined
+  const api = getApi(token);
+  
+  await set({ api, user });
+
+  if (token) {
+    window.localStorage.setItem('jwtToken', token);
   }
   else {
     window.localStorage.removeItem('jwtToken');

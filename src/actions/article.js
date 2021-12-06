@@ -6,7 +6,7 @@ export const emptyArticle = {
 };
 
 export const loadArticle = async ({ state, set }, { slug, loadComments, loadProfile }) => {
-  const { api } = state;
+  const { api, user } = state;
 
   if (slug) {
     try {
@@ -21,8 +21,8 @@ export const loadArticle = async ({ state, set }, { slug, loadComments, loadProf
       // We load author profile in article display page, to correctly render
       // the Following button -- need to know if the current user follows that
       // author or not. It doesn't make sense to make additional request when
-      // the author is current user.
-      if (loadProfile && article.author.username !== state.user.username) {
+      // the author is current user, or if we're not logged in.
+      if (loadProfile && user && article.author.username !== user.username) {
         article.author = await api.Profile.get(article.author.username);
       }
 

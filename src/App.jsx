@@ -73,7 +73,6 @@ const initialize = async ({ set, dispatch }) => {
       const api = getApi(token);
       const user = await api.User.current();
 
-      await set({ api });
       await dispatch(setUser, user);
     }
     catch (e) {

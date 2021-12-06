@@ -1,11 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Tags = ({ tags = [] }) => (
   <ul className="tag-list">
     {tags.map(tag => (
-      <li className="tag-default tag-pill tag-outline" key={tag}>
+      <Link key={tag} className="tag-default tag-pill tag-outline"
+        to={`/tag/${tag}`}>
         {tag}
-      </li>
+      </Link>
     ))}
   </ul>
 );

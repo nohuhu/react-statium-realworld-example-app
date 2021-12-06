@@ -12,12 +12,13 @@ const Meta = () => {
   const { state, dispatch } = useStore();
 
   const slug = state.article?.slug;
-  const currentUser = state.user?.username;
+  const user = state.user;
+  const currentUsername = user?.username;
   const authorUsername = state.article?.author?.username;
   const authorImage = state.article?.author?.image;
   const followingAuthor = state.article?.author?.following;
   const createdAt = state.article?.createdAt;
-  const editable = currentUser && authorUsername && currentUser === authorUsername;
+  const editable = currentUsername && authorUsername && currentUsername === authorUsername;
 
   return (
     <div className="article-meta">
@@ -36,7 +37,8 @@ const Meta = () => {
       </div>
 
       <span>
-        {!editable && (
+        {/* We cannot follow users or favorite articles when not logged in */}
+        {!editable && user && (
           <>
             <FollowButton username={authorUsername} following={followingAuthor} />
 
