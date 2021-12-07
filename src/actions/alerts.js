@@ -1,4 +1,4 @@
-import { alertsKey } from '../components/Alerts.jsx';
+import { alertsKey } from '../symbols.js';
 
 let id = 0;
 

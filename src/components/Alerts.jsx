@@ -1,8 +1,9 @@
 import React from 'react';
-import Store, { useStore } from 'statium';
+import { useStore } from 'statium';
 
-export const alertsKey = 'alerts';
+import { alertsKey } from '../symbols.js';
 
+// This action is only used internally by the Alert widget
 const closeAlert = async ({ state, set }, id) => {
   const alerts = state[alertsKey];
 
@@ -14,7 +15,7 @@ const closeAlert = async ({ state, set }, id) => {
   }
 };
 
-export const AlertWidget = props => {
+export const Alert = props => {
   const { dispatch } = useStore();
   const {
     id,
@@ -29,16 +30,10 @@ export const AlertWidget = props => {
   let children = [...React.Children.toArray(props.children), text];
 
   if (dismissible) {
-    const onClick = e => {
-      if (e) {
-        e.preventDefault();
-      }
-
-      dispatch(closeAlert, id);
-    };
+    const onClick = () => dispatch(closeAlert, id);
 
     if (timeout) {
-      setTimeout(onClick, timeout)
+      setTimeout(onClick, timeout);
     }
 
     children = [...children, (
@@ -58,19 +53,13 @@ export const AlertWidget = props => {
   );
 }
 
-export const AlertProvider = ({ children }) => (
-  <Store tag="Alerts" state={{ [alertsKey]: [] }}>
-    {children}
-  </Store>
-);
-
 export const Alerts = () => {
   const { state: { [alertsKey]: alerts } } = useStore();
 
   return (
     <>
       { alerts.map(({ id, ...alert }) =>
-        <AlertWidget key={id} id={id} {...alert} />)
+        <Alert key={id} id={id} {...alert} />)
       }
     </>
   );

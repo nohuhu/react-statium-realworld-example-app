@@ -7,6 +7,9 @@ const ErrorMessage = ({ error }) => (
   </div>
 );
 
+// We need to use a class Component to implement componentDidCatch()
+// and there is only one state property, so it's easy to make this
+// component not use any state management outside vanilla React.
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);

@@ -24,6 +24,7 @@ const articleLimitOptions = [
 
 const initialState = {
   busy: false,
+  show: true,
 };
 
 const Home = ({ tab }) => {

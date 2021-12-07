@@ -91,11 +91,21 @@ export const saveUserSettings = async ({ state, set, dispatch }) => {
     await dispatch(setUser, user);
 
     await set({ busy: false });
+
+    await dispatch(displayAlert, {
+      type: "success",
+      text: `Settings were saved successfully!`,
+    })
   }
   catch (e) {
     await set({
       serverErrors: e?.response?.data?.errors ?? { error: `Unspecified server error: ${e}` },
       busy: false,
+    });
+
+    await dispatch(displayAlert, {
+      type: "error",
+      text: `There were errors while trying to save settings...`,
     });
   }
 };
