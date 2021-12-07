@@ -1,34 +1,53 @@
-import _axios from 'axios';
+const baseURL = 'https://api.realworld.io/api';
 
-let axios;
-
-const defaultConfig = {
-  baseURL: 'https://api.realworld.io/api',
+let headers = {
+  'Content-Type': 'application/json',
 };
 
 const requests = {
   get: async url => {
-    const response = await axios.get(url);
+    const response = await fetch(baseURL + url, {
+      headers,
+    });
 
-    return response?.data ?? {};
+    return response.json();
   },
 
   post: async (url, payload) => {
-    const response = await axios.post(url, payload);
+    const response = await fetch(baseURL + url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+    });
 
-    return response?.data ?? {};
+    return response.json();
   },
 
   put: async (url, payload) => {
-    const response = await axios.put(url, payload);
+    const response = await fetch(baseURL + url, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(payload),
+    });
 
-    return response?.data ?? {};
+    return response.json();
   },
 
   delete: async url => {
-    const response = await axios.delete(url);
+    const response = await fetch(baseURL + url, {
+      method: 'DELETE',
+      headers,
+      body: '',
+    });
 
-    return response?.data ?? {};
+    // Most of the DELETE requests respond with an empty body,
+    // which causes exceptions on trying to parse it as JSON
+    // if we simply return response.json() like in other methods.
+    // There are two endpoints that do respond with meaningful
+    // JSON payload so we check for it here.
+    const text = await response.text();
+
+    return text ? JSON.parse(text) : {};
   },
 };
 
@@ -101,11 +120,7 @@ const Articles = {
     return response?.article ?? null;
   },
 
-  delete: async slug => {
-    const response = await requests.delete(`/articles/${slug}`);
-
-    return response?.article ?? null;
-  },
+  delete: slug => requests.delete(`/articles/${slug}`),
 
   getComments: async slug => {
     const response = await requests.get(`/articles/${slug}/comments`);
@@ -170,13 +185,11 @@ const API = {
   Profile,
 };
 
-const getApi = (token) => {
-  axios = _axios.create({
-    ...defaultConfig,
-    headers: {
-      ...token ? { authorization: `Token ${token}` } : {},
-    },
-  });
+const getApi = token => {
+  headers = {
+    ...headers,
+    ...token ? { authorization: `Token ${token}` } : {},
+  };
 
   return API;
 };

@@ -191,6 +191,7 @@ export const deleteComment = async ({ state, set, dispatch }, { slug, commentId 
   await set({ busy: true });
 
   try {
+    debugger;
     await api.Articles.deleteComment(slug, commentId);
 
     const { article } = state;

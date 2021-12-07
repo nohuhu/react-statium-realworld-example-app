@@ -2,8 +2,7 @@ import React from 'react';
 import { useStore } from 'statium';
 import { Link } from 'react-router-dom';
 
-import marked from 'marked';
-import { sanitize } from 'dompurify';
+import markdown from 'markdown-it';
 
 import { deleteComment } from '../../../actions/article.js';
 
@@ -35,7 +34,7 @@ const CommentCard = ({ user, slug, articleAuthor, comment }) => {
     currentUsername === commentAuthor
   );
 
-  const commentHtml = sanitize(marked(comment?.body ?? ''));
+  const commentHtml = markdown().render(comment?.body ?? '');
 
   return (
     <div className="card">

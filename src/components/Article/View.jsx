@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useStore } from 'statium';
 
-import marked from 'marked';
-import { sanitize } from 'dompurify';
+import markdown from 'markdown-it';
 
 import Meta from './Meta.jsx';
 import Tags from './Tags.jsx';
@@ -27,7 +26,9 @@ const ArticleView = () => {
     return null;
   }
 
-  const bodyHtml = sanitize(marked(article.body));
+  // No need to sanitize HTML output, markdown-it is configured
+  // to emit safe HTML by default.
+  const bodyHtml = markdown().render(article.body);
 
   return (
     <div className="article-page">
