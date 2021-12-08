@@ -44,7 +44,7 @@ const postCommentAndClearInput = async ({ state, set, dispatch }, slug) => {
   }
   catch (e) {
     await set({
-      [errorsKey]: e.response?.data?.errors,
+      [errorsKey]: e.response?.errors,
       postingComment: false,
     });
   }

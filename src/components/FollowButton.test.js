@@ -2,10 +2,6 @@ import React from 'react';
 import Store from 'statium';
 import { mount } from 'test/enzyme.js';
 
-jest.mock('../actions/profile.js');
-
-import { follow, unfollow } from '../actions/profile.js';
-
 import FollowButton from './FollowButton';
 
 // We need to wrap the FollowButton component in a Store to be able to use it.
@@ -64,15 +60,22 @@ describe("FollowButton component", () => {
   });
 
   describe("behavior", () => {
+    let follow, unfollow;
+
     beforeEach(() => {
-      follow.mockReset();
-      unfollow.mockReset();
+      follow = jest.fn();
+      unfollow = jest.fn();
     });
 
     it("should dispatch follow action when not following the user and clicking on the button", async () => {
       // Note that we don't have to have an extra store for disableButton state here
       // since we don't intend to manipulate it.
-      const tree = mount(<TestFollowButton username="foobaroo" following={false} />);
+      const tree = mount(
+        <TestFollowButton username="foobaroo"
+          following={false}
+          follow={follow}
+          unfollow={unfollow} />
+      );
 
       tree.find('button').simulate('click');
 
@@ -89,7 +92,12 @@ describe("FollowButton component", () => {
     });
 
     it("should dispatch unfollow action when following the user and clicking on the button", async () => {
-      const tree = mount(<TestFollowButton username="foobaroo" following={true} />);
+      const tree = mount(
+        <TestFollowButton username="foobaroo"
+          following={true}
+          follow={follow}
+          unfollow={unfollow} />
+      );
 
       tree.find('button').simulate('click');
 

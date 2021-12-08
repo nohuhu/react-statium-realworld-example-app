@@ -4,51 +4,80 @@ let headers = {
   'Content-Type': 'application/json',
 };
 
+const handleResponse = async response => {
+  let json;
+
+  console.log('response: ', response)
+  try {
+    // Responses to some DELETE requests contain empty body,
+    // which will result in an exception when trying to parse it.
+    json = await response.json();
+    console.log('json: ', json)
+  }
+  catch {
+    json = {};
+  }
+
+  if (response.ok) {
+    return json ?? {};
+  }
+  else {
+    const error = new Error(response.status);
+
+    // Some back end API calls do not conform to the rest of the spec
+    // and return plain text error descrptions, e.g. PUT /user
+    // In real application we'd file a ticket to fix it on the backend,
+    // however in a demo it's easier to accommodate for this discrepancy
+    // in the client code.
+    if (typeof json === 'object') {
+      error.response = json;
+    }
+    else {
+      error.response = {
+        errors: {
+          error: json,
+        },
+      }
+
+      console.log('error.response: ', error.response)
+    }
+
+    console.log('error: ', error)
+
+    throw error;
+  }
+};
+
 const requests = {
-  get: async url => {
-    const response = await fetch(baseURL + url, {
+  get: async url => handleResponse(
+    await fetch(baseURL + url, {
       headers,
-    });
+    })
+  ),
 
-    return response.json();
-  },
-
-  post: async (url, payload) => {
-    const response = await fetch(baseURL + url, {
+  post: async (url, payload) => handleResponse(
+    await fetch(baseURL + url, {
       method: 'POST',
       headers,
       body: JSON.stringify(payload),
-    });
+    })
+  ),
 
-    return response.json();
-  },
-
-  put: async (url, payload) => {
-    const response = await fetch(baseURL + url, {
+  put: async (url, payload) => handleResponse(
+    await fetch(baseURL + url, {
       method: 'PUT',
       headers,
       body: JSON.stringify(payload),
-    });
+    })
+  ),
 
-    return response.json();
-  },
-
-  delete: async url => {
-    const response = await fetch(baseURL + url, {
+  delete: async url => handleResponse(
+    await fetch(baseURL + url, {
       method: 'DELETE',
       headers,
       body: '',
-    });
-
-    // Most of the DELETE requests respond with an empty body,
-    // which causes exceptions on trying to parse it as JSON
-    // if we simply return response.json() like in other methods.
-    // There are two endpoints that do respond with meaningful
-    // JSON payload so we check for it here.
-    const text = await response.text();
-
-    return text ? JSON.parse(text) : {};
-  },
+    })
+  ),
 };
 
 const User = {
@@ -58,7 +87,11 @@ const User = {
     return response?.user ?? null;
   },
 
-  login: (email, password) => requests.post('/users/login', { user: { email, password } }),
+  login: async (email, password) => {
+    const response = await requests.post('/users/login', { user: { email, password } });
+
+    return response?.user ?? null;
+  },
 
   register: async (username, email, password) => {
     const response = await requests.post('/users', {
@@ -178,7 +211,7 @@ const Profile = {
   },
 };
 
-const API = {
+export const API = {
   User,
   Articles,
   Tags,

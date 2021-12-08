@@ -1,7 +1,9 @@
 import React from 'react';
 import { mount } from 'test/enzyme.js'
 
-import { alertsKey, AlertProvider, Alerts } from './Alerts.jsx';
+import { alertsKey } from '../symbols.js';
+import Notifications from './NotificationProvider.jsx';
+import { Alerts } from './Alerts.jsx';
 import { displayAlert } from '../actions/alerts.js';
 
 const alerts = [{
@@ -23,31 +25,31 @@ describe("Alerts", () => {
 
   beforeEach(() => {
     tree = mount(
-      <AlertProvider>
+      <Notifications>
         <Alerts />
-      </AlertProvider>
+      </Notifications>
     );
   });
 
   describe("rendering", () => {
     it("should render empty alert list by default", () => {
-      expect(tree.find('AlertProvider')).toMatchSnapshot();
+      expect(tree.find('Alerts')).toMatchSnapshot();
     });
 
     it("should render alert widgets correctly", async () => {
-      await tree.find('Store[tag="Alerts"]').instance().set({
+      await tree.find('Store[tag="Notifications"]').instance().set({
         [alertsKey]: alerts,
       });
 
       tree.update();
 
-      expect(tree.find('AlertProvider')).toMatchSnapshot();
+      expect(tree.find('Alerts')).toMatchSnapshot();
     });
   });
 
   describe("behavior", () => {
     beforeEach(async () => {
-      await tree.find('Store[tag="Alerts"]').instance().dispatch(
+      await tree.find('Store[tag="Notifications"]').instance().dispatch(
         displayAlert,
         {
           type: "success",
@@ -60,23 +62,23 @@ describe("Alerts", () => {
     });
 
     it("should display alert when action is dispatched", async () => {
-      expect(tree.find('AlertWidget')).toMatchSnapshot();
+      expect(tree.find('Alert')).toMatchSnapshot();
     });
 
     it("should close dismissible alert on timeout", async () => {
       // Dismiss timeout is set to 50 ms
       await sleep(100);
 
-      expect(tree.find('Alerts').contains('AlertWidget')).toBe(false);
+      expect(tree.find('Alerts').contains('Alert')).toBe(false);
     });
 
     it("should close dismissible alert on button click", async () => {
-      tree.find('AlertWidget button').simulate('click');
+      tree.find('Alert button').simulate('click');
 
       // Give the handler enough time to fire
       await sleep(10);
 
-      expect(tree.find('Alerts').contains('AlertWidget')).toBe(false);
+      expect(tree.find('Alerts').contains('Alert')).toBe(false);
     });
   });
 });

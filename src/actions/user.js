@@ -1,6 +1,23 @@
 import getApi from '../api.js';
 import { displayAlert } from './alerts.js';
 
+export const getUser = async () => {
+  const token = window.localStorage.getItem('jwtToken');
+  let user = null;
+
+  if (token) {
+    try {
+      const api = getApi(token);
+      user = await api.User.current();
+    }
+    catch (e) {
+      // Token expired, etc. Default API is tokenless, so no need to set it again.
+    }
+  }
+
+  return user;
+};
+
 export const setUser = async ({ set }, user) => {
   const token = user?.token;
 
@@ -23,15 +40,23 @@ export const login = async ({ state, set, dispatch }) => {
   const { api, email, password } = state;
 
   try {
-    const response = await api.User.login(email, password);
-    const user = response?.user ?? null;
+    const user = await api.User.login(email, password);
 
+    // We don't reset busy flag after dispatching setUser
+    // because the Login page component that dispatches this
+    // action will navigate to / if state.user is defined.
+    // At that point the Login component will be unmounted
+    // and trying to update its store will throw an error.
+    // We navigate in the Login component instead of here
+    // because we want the redirect to happen upon Login
+    // rendering if the user is already logged in, before
+    // this action has a chance to be dispatched.
     await dispatch(setUser, user);
   }
   catch (e) {
     await set({
       busy: false,
-      serverErrors: {
+      serverErrors: e.response?.errors ?? {
         'Login failed': ['Invalid e-mail or password'],
       },
     });
@@ -67,7 +92,7 @@ export const register = async ({ data, state, set, dispatch }) => {
   }
   catch (e) {
     await set({
-      serverErrors: e?.response?.data?.errors ?? { error: `Unspecified server error: ${e}` },
+      serverErrors: e?.response?.errors ?? { error: `Unspecified server error: ${e}` },
       busy: false,
     });
   }
@@ -99,12 +124,12 @@ export const saveUserSettings = async ({ state, set, dispatch }) => {
   }
   catch (e) {
     await set({
-      serverErrors: e?.response?.data?.errors ?? { error: `Unspecified server error: ${e}` },
+      serverErrors: e?.response?.errors ?? { error: `Unspecified server error: ${e}` },
       busy: false,
     });
 
     await dispatch(displayAlert, {
-      type: "error",
+      type: "danger",
       text: `There were errors while trying to save settings...`,
     });
   }

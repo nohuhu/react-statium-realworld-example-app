@@ -37,7 +37,7 @@ export const loadArticle = async ({ state, set }, { slug, loadComments, loadProf
     }
     catch (e) {
       await set({
-        errors: e.response?.data?.errors,
+        errors: e.response?.errors,
         busy: false,
       });
     }
@@ -87,7 +87,7 @@ export const postArticle = async ({ data, state, set, dispatch }) => {
   }
   catch (e) {
     await set({
-      errors: e.response?.data?.errors,
+      errors: e.response?.errors,
       busy: false,
     });
   }
@@ -128,7 +128,7 @@ export const deleteArticle = async ({ data, state, set, dispatch }, slug) => {
   }
   catch (e) {
     await set({
-      errors: e.response?.data?.errors,
+      errors: e.response?.errors,
       busy: false,
     });
 
@@ -157,7 +157,7 @@ export const postComment = async ({ state, set, dispatch }, { slug, comment }) =
   }
   catch (e) {
     await set({
-      errors: e.response?.data?.errors,
+      errors: e.response?.errors,
     });
   }
 };
@@ -209,7 +209,7 @@ export const deleteComment = async ({ state, set, dispatch }, { slug, commentId 
   }
   catch (e) {
     await set({
-      errors: e.response?.data?.errors,
+      errors: e.response?.errors,
       busy: false,
     });
   }

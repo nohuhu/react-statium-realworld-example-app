@@ -337,26 +337,3 @@ exports[`Register form UI behavior should render 1`] = `
   </Store>
 </Register>
 `;
-
-exports[`Register form user interaction should display errors if the API call is rejected 1`] = `
-<ErrorList
-  errors={
-    Object {
-      "username": Array [
-        "has already been taken",
-      ],
-    }
-  }
->
-  <ul
-    className="error-messages"
-  >
-    <li
-      key="username"
-    >
-      username: 
-      has already been taken
-    </li>
-  </ul>
-</ErrorList>
-`;

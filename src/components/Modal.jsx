@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 
 // main.css from demo.productionready.io is based on very old
 // 4.0.0-alpha2 version of Bootstrap. This stylesheet adds
-// missing styles to make modals work as expected.
+// missing styles to make modals work as expected(ish).
 import './Modal.css';
 
 const showModal = modalEl => {
@@ -29,7 +29,7 @@ const hideModal = modalEl => {
   modalEl.style.display = 'none';
 };
 
-export const Modal = props => {
+const Modal = props => {
   const modalRef = useRef(null);
 
   const {

@@ -1,4 +1,4 @@
-export const loadProfile = async ({ state, set, dispatch }, username) => {
+export const loadProfile = async ({ state, set }, username) => {
   await set({ busy: true });
 
   const profile = await state.api.Profile.get(username);
